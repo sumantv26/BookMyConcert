@@ -22,6 +22,7 @@ const schema = new Schema({
     minlength: 3,
     maxlength: 1024,
   },
+
   role: {
     type: String,
     required: true,
@@ -32,9 +33,9 @@ schema.methods.generateAuthToken = function () {
     return jwt.sign({ _id: this._id, name: this.name, role:this.role}, config.get('jwtKey'))
 }
 
-const User=model("User",schema)
+const Manager=model("Manager",schema)
 
-function validateUser(user) {
+function validateManager(user) {
     const schema = Joi.object({
         name: Joi.string().min(3).max(225).required(),
         email: Joi.string().email().min(3).max(225).required(),
@@ -44,5 +45,5 @@ function validateUser(user) {
     return schema.validate(user)
 
 }
-exports.User = User;
-exports.validateUser = validateUser
+exports.Manager = Manager;
+exports.validateManager= validateManager

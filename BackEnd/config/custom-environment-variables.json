@@ -1,0 +1,4 @@
+{
+    "jwtKey":"bmc_jwtKey", 
+    "db":"bmc_db"
+}
