@@ -2,35 +2,14 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 const config = require('config');
 const jwt = require("jsonwebtoken");
+const { common } = require("./Common");
 const { Schema,model } = mongoose;
 const schema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 20,
-  },
-  email: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 20,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 1024,
-  },
-
-  role: {
-    type: String,
-    required: true,
-  },
+...common
 });
 
 schema.methods.generateAuthToken = function () {
-    return jwt.sign({ _id: this._id, name: this.name, role:this.role}, config.get('jwtKey'))
+    return jwt.sign({ _id: this._id, name: this.name,email:this.email, role:this.role}, config.get('jwtKey'))
 }
 
 const Manager=model("Manager",schema)
