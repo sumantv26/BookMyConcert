@@ -10,20 +10,20 @@ const schema = new Schema({
 
 schema.methods.generateAuthToken = function () {
   return jwt.sign(
-    { _id: this._id, name: this.name, email: this.email, role: "admin" },
+    { _id: this._id, name: this.name, email: this.email, role: "customer" },
     config.get("jwtKey")
   );
 };
 
-const Admin = model("Admin", schema);
+const Customer = model("Customer", schema);
 
-function validateAdmin(admin) {
+function validateCustomer(customer) {
   const schema = Joi.object({
     name: Joi.string().min(3).max(225).required(),
     email: Joi.string().email().min(3).max(225).required(),
     password: Joi.string().min(5).max(1024),
   });
-  return schema.validate(admin);
+  return schema.validate(customer);
 }
-exports.Admin = Admin;
-exports.validateAdmin = validateAdmin;
+exports.Customer = Customer;
+exports.validateCustomer = validateCustomer;
