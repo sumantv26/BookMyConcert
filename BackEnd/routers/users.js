@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
       if (await Manager.findOne({ email: data.email }))
         return res
           .status(400)
-          .send("You are already register with different role. ");
+          .send("You are already registered with different role. ");
       break;
     case "manager":
       Model = Manager;
@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
       if (await Customer.findOne({ email: data.email }))
         return res
           .status(400)
-          .send("You are already register with different role. ");
+          .send("You are already registered with different role. ");
       break;
     case "admin":
       Model = Admin;
@@ -39,7 +39,6 @@ router.post("/", async (req, res) => {
   if (user) return res.status(400).send("You have already Registerd");
   user = new Model(req.body);
   const salt = await bcrypt.genSalt(10);
-
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
   const token = user.generateAuthToken();
