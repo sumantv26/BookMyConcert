@@ -4,9 +4,12 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const { common } = require("./Common");
 const { Schema, model } = mongoose;
-const schema = new Schema({
-  ...common,
-});
+const schema = new Schema(
+  {
+    ...common,
+  },
+  { strict: false }
+);
 
 schema.methods.generateAuthToken = function () {
   return jwt.sign(
@@ -17,14 +20,24 @@ schema.methods.generateAuthToken = function () {
 
 const Customer = model("Customer", schema);
 
-function validateCustomer(customer) {
-  const schema = Joi.object({
-    name: Joi.string().min(3).max(225).required(),
-    email: Joi.string().email().min(3).max(225).required(),
-    password: Joi.string().min(5).max(1024),
-    role: Joi.string(),
-  });
-  return schema.validate(customer);
-}
+// function validateCustomer(customer) {
+//   const now = Date.now();
+//   // 18 years ago date
+//   const cutOffDate = new Date(now - 1000 * 60 * 60 * 24 * 365 * 18);
+
+//   const schema = Joi.object({
+//     name: Joi.string().min(3).max(255).required(),
+//     email: Joi.string().email().required(),
+//     password: Joi.string().min(3).max(15).required(),
+//     password_confirmation: Joi.any()
+//       .valid(Joi.ref("password"))
+//       .required()
+//       .options({ language: { any: { allowOnly: "must match password" } } }),
+//     birthDate: Joi.date().max(cutOffDate).required(),
+//     gender: Joi.string().valid("male", "female", "other"),
+//     role: Joi.string().valid("user").required(),
+//   });
+//   return schema.validate(customer);
+// }
 exports.Customer = Customer;
-exports.validateCustomer = validateCustomer;
+// exports.validateCustomer = validateCustomer;

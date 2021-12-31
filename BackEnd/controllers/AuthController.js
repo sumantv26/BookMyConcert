@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const bcrypt = require("bcrypt");
 
-const { Customer, validateCustomer } = require("../models/Customer");
-const { Manager, validateManager } = require("../models/Manager");
+const { Customer } = require("../models/Customer");
+const { Manager } = require("../models/Manager");
 
 const { Admin } = require("../models/Admin");
 
@@ -12,11 +12,11 @@ exports.signup = async (req, res, next) => {
   const data = req.body;
   const role = data.role;
   let Model;
-  let validate;
+  // let validate;
   switch (role) {
     case "user":
       Model = Customer;
-      validate = validateCustomer;
+      // validate = validateCustomer;
       if (await Manager.findOne({ email: data.email }))
         return res
           .status(400)
@@ -24,7 +24,7 @@ exports.signup = async (req, res, next) => {
       break;
     case "concert manager":
       Model = Manager;
-      validate = validateManager;
+      // validate = validateManager;
       if (await Customer.findOne({ email: data.email }))
         return res
           .status(400)
@@ -32,11 +32,11 @@ exports.signup = async (req, res, next) => {
       break;
     case "admin":
       Model = Admin;
-      validate = validateAdmin;
+      // validate = validateAdmin;
       break;
   }
-  const { error } = validate(data);
-  if (error) return res.status(400).send(error.message);
+  // const { error } = validate(data);
+  // if (error) return res.status(400).send(error.message);
 
   let user = await Model.findOne({ email: req.body.email });
   if (user) return res.status(400).send("You are already registered");

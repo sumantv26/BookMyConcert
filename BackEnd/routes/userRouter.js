@@ -5,7 +5,11 @@ const validateLoginInputs = require("../middleware/validateLoginInputs");
 
 const router = express.Router();
 
-router.post("/signup", authController.signup);
-router.post("/login", validateLoginInputs, authController.login);
+router.post(
+  "/signup",
+  validateLoginInputs.validateCustomer,
+  authController.signup
+);
+router.post("/login", authController.login);
 
 module.exports = router;
