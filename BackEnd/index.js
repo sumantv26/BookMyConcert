@@ -1,9 +1,12 @@
 const express = require("express");
 
 const app = require("./startup/app");
-
+const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 require("./startup/config")();
 require("./startup/db")();
 // require("./startup/app")();
 
-app.listen(5000, () => console.log("Listening to port 5000"));
+const PORT=process.env.PORT||5000
+
+app.listen(PORT, () => console.log("Listening to port "+PORT));
