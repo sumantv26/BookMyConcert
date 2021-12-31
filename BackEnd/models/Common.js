@@ -33,4 +33,4 @@ const common = {
     enum: ["user", "concert manager", "admin"],
   },
 };
-module.exports.common = common;
+module.exports = common;

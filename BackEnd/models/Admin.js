@@ -2,10 +2,10 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const { common } = require("./Common");
+const Common = require("./Common");
 const { Schema, model } = mongoose;
 const schema = new Schema({
-  ...common,
+  ...Common,
 });
 
 schema.methods.generateAuthToken = function () {
@@ -25,5 +25,5 @@ const Admin = model("Admin", schema);
 //   });
 //   return schema.validate(admin);
 // }
-exports.Admin = Admin;
+module.exports = Admin;
 // exports.validateAdmin = validateAdmin;

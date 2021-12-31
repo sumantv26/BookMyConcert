@@ -1,12 +1,37 @@
-const Joi = require("joi");
+// const Joi = require("joi");
 const mongoose = require("mongoose");
 const config = require("config");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { common } = require("./Common");
-const { Schema, model } = mongoose;
-const schema = new Schema({
-  ...common,
+const Common = require("./Common");
+// const { Schema, model } = mongoose;
+const schema = new mongoose.Schema({
+  ...Common,
+  contactNumber: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  creditCardNum: {
+    type: Number,
+    required: true,
+  },
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+schema.pre("save", async function (next) {
+  // if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+schema.methods.correctPassword = async function (provided, actual) {
+  return await bcrypt.compare(provided, actual);
+};
 
 schema.methods.generateAuthToken = function () {
   return jwt.sign(
@@ -15,7 +40,7 @@ schema.methods.generateAuthToken = function () {
   );
 };
 
-const Manager = model("Manager", schema);
+const Manager = mongoose.model("Manager", schema);
 
 // function validateManager(user) {
 //   const schema = Joi.object({
@@ -31,5 +56,5 @@ const Manager = model("Manager", schema);
 //   });
 //   return schema.validate(user);
 // }
-exports.Manager = Manager;
+module.exports = Manager;
 // exports.validateManager = validateManager;

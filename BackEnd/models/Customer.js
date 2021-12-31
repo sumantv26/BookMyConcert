@@ -2,14 +2,11 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const { common } = require("./Common");
-const { Schema, model } = mongoose;
-const schema = new Schema(
-  {
-    ...common,
-  },
-  { strict: false }
-);
+const Common = require("./Common");
+// const { Schema, model } = mongoose;
+const schema = new mongoose.Schema({
+  ...Common,
+});
 
 schema.methods.generateAuthToken = function () {
   return jwt.sign(
@@ -18,7 +15,7 @@ schema.methods.generateAuthToken = function () {
   );
 };
 
-const Customer = model("Customer", schema);
+const Customer = mongoose.model("Customer", schema);
 
 // function validateCustomer(customer) {
 //   const now = Date.now();
@@ -39,5 +36,6 @@ const Customer = model("Customer", schema);
 //   });
 //   return schema.validate(customer);
 // }
-exports.Customer = Customer;
+
+module.exports = Customer;
 // exports.validateCustomer = validateCustomer;
