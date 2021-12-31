@@ -22,6 +22,7 @@ function validateCustomer(customer) {
     name: Joi.string().min(3).max(225).required(),
     email: Joi.string().email().min(3).max(225).required(),
     password: Joi.string().min(5).max(1024),
+    role: Joi.string(),
   });
   return schema.validate(customer);
 }

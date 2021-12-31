@@ -1,4 +1,4 @@
 {
-    "jwtKey":"",
-    "db":""
+  "jwtKey": "myJwtKey",
+  "db": "mongodb://localhost/bookmyconcert"
 }
