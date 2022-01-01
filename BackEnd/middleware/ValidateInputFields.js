@@ -12,12 +12,12 @@ const Joi = require("joi");
 // };
 const validateManager = (data) => {
   const managerSchema = Joi.object({
-    contactNumber: Joi.string()
-      .length(10)
-      .pattern(/^[0-9]+$/)
-      .required(),
-    creditCardNum: Joi.string().length(16).required(),
-    isApproved: Joi.boolean().default(false),
+    // contactNumber: Joi.string()
+    //   .length(10)
+    //   .pattern(/^[0-9]+$/)
+    //   .required(),
+    // creditCardNum: Joi.string().length(16).required(),
+    // isApproved: Joi.boolean().default(false),
   }).options({ allowUnknown: true });
   return managerSchema.validate(data);
 };
@@ -32,20 +32,15 @@ exports.validateSignup = (req, res, next) => {
     name: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(3).max(15).required(),
-    passwordConfirmation: Joi.any()
-      .equal(Joi.ref("password"))
-      .required()
-      .label("Confirm password")
-      .options({ messages: { "any.only": "{{#label}} does not match" } }),
-    birthDate: Joi.date().max(cutOffDate).required(),
-    gender: Joi.string().valid("male", "female", "other"),
-    role: Joi.string().valid("user", "manager", "admin").required(),
+    // birthDate: Joi.date().max(cutOffDate).required(),
+    // gender: Joi.string().valid("male", "female", "other"),
+    role: Joi.string().valid("customer", "manager", "admin").required(),
   }).options({ allowUnknown: true });
 
   const { error } = commonSchema.validate(user);
   if (error) return res.status(400).send(error.message);
 
-  if (user.role === "concert manager") {
+  if (user.role === "manager") {
     const { error } = validateManager(user);
     if (error) return res.status(400).send(error.message);
   }
