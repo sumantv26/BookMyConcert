@@ -39,7 +39,7 @@ exports.validateSignup = (req, res, next) => {
       .options({ messages: { "any.only": "{{#label}} does not match" } }),
     birthDate: Joi.date().max(cutOffDate).required(),
     gender: Joi.string().valid("male", "female", "other"),
-    role: Joi.string().valid("user", "concert manager", "admin").required(),
+    role: Joi.string().valid("user", "manager", "admin").required(),
   }).options({ allowUnknown: true });
 
   const { error } = commonSchema.validate(user);

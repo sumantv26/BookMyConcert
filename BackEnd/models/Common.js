@@ -1,3 +1,5 @@
+const { string } = require("joi");
+
 const common = {
   name: {
     type: String,
@@ -30,7 +32,7 @@ const common = {
   role: {
     type: String,
     required: true,
-    enum: ["user", "concert manager", "admin"],
+    enum: ["user", "manager", "admin"],
   },
 };
 module.exports = common;

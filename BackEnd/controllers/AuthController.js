@@ -10,7 +10,7 @@ const Manager = require("../models/Manager");
 
 const getModel = (data) => {
   if (data.role === "user") return Customer;
-  else if (data.role === "concert manager") return Manager;
+  else if (data.role === "manager") return Manager;
   else if (data.role === "admin") return Admin;
   return null;
 };
