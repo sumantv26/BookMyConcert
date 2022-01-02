@@ -1,5 +1,3 @@
-const { string } = require("joi");
-
 const common = {
   name: {
     type: String,
@@ -21,18 +19,19 @@ const common = {
   //   required: true,
   //   unique: true,
   // },
-  birthDate: {
-    type: Date,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-  },
+  // birthDate: {
+  //   type: Date,
+  //   required: true,
+  // },
+  // gender: {
+  //   type: String,
+  //   required: true,
+  // },
+  avatar:{type:String,default:"avatar.png"},
   role: {
     type: String,
     required: true,
-    enum: ["user", "manager", "admin"],
+    enum: ["customer", "manager", "admin"],
   },
 };
 module.exports = common;

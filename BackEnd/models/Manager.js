@@ -7,31 +7,21 @@ const Common = require("./Common");
 // const { Schema, model } = mongoose;
 const schema = new mongoose.Schema({
   ...Common,
-  contactNumber: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  creditCardNum: {
-    type: Number,
-    required: true,
-  },
+  // contactNumber: {
+  //   type: Number,
+  //   required: true,
+  //   unique: true,
+  // },
+  // creditCardNum: {
+  //   type: Number,
+  //   required: true,
+  // },
   isApproved: {
     type: Boolean,
     default: false,
-  },
+  }
 });
 
-schema.pre("save", async function (next) {
-  // if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-schema.methods.correctPassword = async function (provided, actual) {
-  return await bcrypt.compare(provided, actual);
-};
 
 schema.methods.generateAuthToken = function () {
   return jwt.sign(
