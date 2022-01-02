@@ -14,7 +14,7 @@ module.exports.identifyRole = async (req, res, next) => {
     req.user.Model = getModel(req.query.user);
     next();
   }
-  const user = await Users.findOne({ email: req.user.email });
-  req.user.Model = getModel(user.role);
+//   const user = await Users.findOne({ email: req.user.email });
+  req.user.Model = getModel(req.user.role);
   next();
 };
