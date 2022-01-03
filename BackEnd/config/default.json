@@ -1,4 +1,4 @@
 {
-    "jwtKey":"",
-    "db":""
+  "jwtKey":"myJwtKey",
+  "db":"mongodb://127.0.0.1/bookmyconcert"
 }
