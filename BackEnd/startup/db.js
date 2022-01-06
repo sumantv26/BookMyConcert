@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 const config = require("config");
+const logger = require("./logger");
 
-module.exports = () => {
+module.exports = (app) => {
   mongoose
-    .connect("mongodb://127.0.0.1/bookmyconcert")
-    .then(() => console.log(`Database is connected to ${config.get("db")}`))
-    .catch(() => console.log("could not connect to db"));
+    .connect(config.get("db"))
+    .then(() => logger.info(`connected to mongodb at ${config.get("db")}`))
+    .catch((ex)=>{
+      logger.error("db: "+ex.message)
+      throw new Error("can not connect to DB.")
+    })
+    
 };

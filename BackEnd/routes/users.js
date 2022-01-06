@@ -14,6 +14,7 @@ const { identifyRole } = require("../middleware/identifyRole");
 const validateObjectId = require("../middleware/validateObjectId");
 const authController = require("./../controllers/AuthController");
 const inputValidation = require("../middleware/ValidateInputFields");
+const asyncMiddleware = require("../middleware/asyncMiddleware");
 const router = express.Router();
 const upload = getMulterForAvatar();
 
