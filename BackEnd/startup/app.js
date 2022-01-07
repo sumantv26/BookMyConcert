@@ -3,10 +3,10 @@ const express = require("express");
 // const users = require("../routers/users");
 // const userRouter = require("../routes/userRouter");
 const winston = require("winston");
-const userRouter = require("../routes/userRouter");
-const managers = require("../routes/managers");
+const userRouter = require("../routers/userRouter");
+const managers = require("../routers/managers");
 
-const images = require("../routes/images");
+const images = require("../routers/images");
 const error = require("../middleware/error");
 const logger = require("./logger");
 

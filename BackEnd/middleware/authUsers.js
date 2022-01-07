@@ -8,6 +8,7 @@ const Users = require("../models/AllUsers");
 
 const isJWTExpired = (jwtIssuedAt, changedPasswordTime) => {
   if (changedPasswordTime) {
+    console.log("hello");
     const passwordChangedAt = parseInt(changedPasswordTime.getTime() / 1000);
 
     return jwtIssuedAt < passwordChangedAt;
@@ -24,7 +25,7 @@ module.exports.authenticateUsers = async (req, res, next) => {
     });
   const decoded = await promisify(jwt.verify)(token, config.get("jwtKey"));
   // 1. Check if user exists
-  const user = Users.findOne({ _id: decoded._id });
+  const user = await Users.findOne({ email: decoded.email });
   if (!user)
     return res.status(401).json({
       status: "fail",
@@ -33,7 +34,7 @@ module.exports.authenticateUsers = async (req, res, next) => {
   // 2. Check is password is changes or not
   const Model = getModel(user.role);
   const reqUser = await Model.findOne({ _id: user._id });
-  if (isJWTExpired(decoded.iat, reqUser.passwordChangedAt)) {
+  if (isJWTExpired(decoded.iat, reqUser?.passwordChangedAt)) {
     return res.status(401).json({
       status: "fail",
       messsage:
@@ -54,10 +55,11 @@ module.exports.authenticateUsers = async (req, res, next) => {
 };
 
 module.exports.authAdmin = (req, res, next) => {
-  if (!(req.user.role && req.user.role === "admin"))
+  if (!(req.user?.role === "admin"))
     return res.status(403).send("access denied. you are not an admin");
   next();
 };
+
 module.exports.authManagers = (req, res, next) => {
   if (!(req.user.role && req.user.role === "manager"))
     return res.status(403).send("access denied. you are not a manager");
