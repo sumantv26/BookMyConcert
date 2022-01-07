@@ -14,24 +14,20 @@ const common = {
     type: String,
     required: true,
   },
-  // contactNumber: {
-  //   type: Number,
-  //   required: true,
-  //   unique: true,
-  // },
-  // birthDate: {
-  //   type: Date,
-  //   required: true,
-  // },
-  // gender: {
-  //   type: String,
-  //   required: true,
-  // },
-  avatar:{type:String,default:"avatar.png"},
+  birthDate: {
+    type: Date,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+  },
+  avatar: { type: String, default: "avatar.png" },
   role: {
     type: String,
     required: true,
     enum: ["customer", "manager", "admin"],
   },
+  passwordChangedAt: Date,
 };
 module.exports = common;

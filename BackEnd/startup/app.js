@@ -2,8 +2,8 @@ const express = require("express");
 // const auth = require("../routers/auth");
 // const users = require("../routers/users");
 // const userRouter = require("../routes/userRouter");
-const winston = require('winston');
-const users = require("../routes/users");
+const winston = require("winston");
+const userRouter = require("../routes/userRouter");
 const managers = require("../routes/managers");
 
 const images = require("../routes/images");
@@ -12,15 +12,14 @@ const logger = require("./logger");
 
 const app = express();
 
-require("../startup/db")(app);
+require("../startup/db")();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use("/login", auth);
 // app.use("/signup", users);
 app.use("/api", images);
-app.use("/users/managers",managers);
-app.use("/users", users);
-
+app.use("/users", userRouter);
+app.use("/users/managers", managers);
 
 // app.use("/users/customers",customers)
 
@@ -32,7 +31,6 @@ app.all("*", (req, res, next) => {
   });
 });
 
-app.use(error)
-
+app.use(error);
 
 module.exports = app;

@@ -1,6 +1,15 @@
 const Joi = require("joi");
 
-exports.validateSignup = (req, res, next) => {
+const validateInputs = (schema, input, res) => {
+  const { error } = schema.validate(input);
+  if (error)
+    return res.status(400).json({
+      status: "fail",
+      message: `${error.message}. Invalid Input. Please try again.`,
+    });
+};
+
+module.exports.validateSignup = (req, res, next) => {
   const user = req.body;
   const now = Date.now();
   // 18 years ago date
@@ -10,11 +19,11 @@ exports.validateSignup = (req, res, next) => {
     name: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(3).max(15).required(),
-    passwordConfirmation: Joi.any()
-      .equal(Joi.ref("password"))
-      .required()
-      .label("Confirm password")
-      .options({ messages: { "any.only": "{{#label}} does not match" } }),
+    // passwordConfirmation: Joi.any()
+    //   .equal(Joi.ref("password"))
+    //   .required()
+    //   .label("Confirm password")
+    //   .options({ messages: { "any.only": "{{#label}} does not match" } }),
     birthDate: Joi.date().max(cutOffDate).required(),
     gender: Joi.string().valid("male", "female", "other").required(),
     role: Joi.string().valid("user", "manager", "admin").required(),
@@ -35,20 +44,29 @@ exports.validateSignup = (req, res, next) => {
     validationSchema = Joi.object({ ...managerSchema });
   else validationSchema = Joi.object({ ...commonSchema });
 
-  const { error } = validationSchema.validate(user);
-  if (error) return res.status(400).send(error.message);
+  validateInputs(validationSchema, user, res);
+  // const { error } = validationSchema.validate(user);
+  // if (error) return res.status(400).json({
+  //   status: "fail",
+  //   message: `${error.message}. Invalid Input. Please try again.`,
+  // });
 
   next();
 };
 
-exports.validateLogin = (req, res, next) => {
+module.exports.validateLogin = (req, res, next) => {
   const user = req.body;
   const loginSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(3).max(15).required(),
   });
 
-  const { error } = loginSchema.validate(user);
-  if (error) return res.status(400).send(error.message);
+  validateInputs(loginSchema, user, res);
+  // const { error } = loginSchema.validate(user);
+  // if (error)
+  //   return res.status(400).json({
+  //     status: "fail",
+  //     message: `${error.message}. Invalid Input. Please try again.`,
+  //   });
   next();
 };
