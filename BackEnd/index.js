@@ -1,12 +1,29 @@
-require('express-async-errors');
-const express = require("express");
+// require("express-async-errors");
+const dotenv = require("dotenv");
+
+process.on("uncaughtException", (err) => {
+  console.log(`${err.name}: ${err.message}`);
+  console.log("Uncaught Exception. Shutting Down...");
+  process.exit(1);
+});
+
+dotenv.config({ path: "./config.env" });
+
 const app = require("./startup/app");
-const Joi = require('joi')
-Joi.objectId = require('joi-objectid')(Joi)
-require("./startup/config")();
+// require("./startup/config")();
+// const Joi = require("joi");
+// Joi.objectId = require("joi-objectid")(Joi);
 
 // require("./startup/app")();
 
-const PORT=process.env.PORT||5000
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log("Listening to port "+PORT));
+const server = app.listen(PORT, () => console.log("Listening to port " + PORT));
+
+process.on("unhandledRejection", (err) => {
+  console.log(`${err.name}: ${err.message}`);
+  console.log("Unhandled Rejection. Shutting Down...");
+  server.close(() => {
+    process.exit(1);
+  });
+});

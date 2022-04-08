@@ -1,36 +1,35 @@
 const express = require("express");
-// const auth = require("../routers/auth");
-// const users = require("../routers/users");
-// const userRouter = require("../routes/userRouter");
-const winston = require("winston");
-const userRouter = require("../routers/userRouter");
-const managers = require("../routers/managers");
-
-const images = require("../routers/images");
-const error = require("../middleware/error");
-const logger = require("./logger");
+const path = require("path");
+// const images = require("../routes/images");
+const errIdentifier = require("../utils/errIdentifier");
+const userRouter = require("../routes/userRoutes");
+const concertRouter = require("../routes/concertRoutes");
+// const expRouter = require("../routes/expRouter");
+// const adminRouter = require("../routes/adminRoutes");
+const globalErrorHandler = require("../controllers/errorController");
+require("./connectToDB")();
 
 const app = express();
 
-require("../startup/db")();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use("/login", auth);
-// app.use("/signup", users);
-app.use("/api", images);
-app.use("/users", userRouter);
-app.use("/users/managers", managers);
-
-// app.use("/users/customers",customers)
+app.use(express.static(path.join(__dirname, "public")));
+// app.use("/api", images);
+app.use("/user", userRouter);
+app.use("/concert", concertRouter);
+// app.use("/exp", expRouter);
+// app.use("/post", postRouter);
+// app.use("/admin", adminRouter);
 
 // for all unhandled routes
 app.all("*", (req, res, next) => {
-  res.status(404).json({
-    status: "fail",
-    message: `Can't find ${req.originalUrl} on this server`,
-  });
+  errIdentifier.generateError(
+    next,
+    `Can't find ${req.originalUrl} on this server`,
+    404
+  );
 });
 
-app.use(error);
+app.use(globalErrorHandler);
 
 module.exports = app;

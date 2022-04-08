@@ -1,4 +1,4 @@
 {
-  "jwtKey":"myJwtKey",
-  "db":"mongodb://127.0.0.1/bookmyconcert"
+  "jwtKey": "I am a developer",
+  "db": "mongodb+srv://shubham:czra43p9X0yxAt52@cluster0.dnoms.mongodb.net/test"
 }
