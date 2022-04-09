@@ -65,7 +65,7 @@ const schema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    images: {
+    optionalImages: {
       type: [String],
     },
     price: {

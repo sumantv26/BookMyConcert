@@ -1,20 +1,20 @@
 const multer = require("multer");
 const sharp = require("sharp");
-module.exports = class Image {
-  constructor(imageType) {
-    this.imageType = imageType;
-    if (imageType === "userPhoto") this.width = this.height = 500;
-    else if (imageType === "coverImage") {
-      this.width = 820;
-      this.height = 360;
-    }
-  }
-  static multerStorage = multer.memoryStorage();
+const errIdentifier = require("../utils/errIdentifier");
+const getModel = require("../utils/getModel");
 
+class Image {
+  imageTypes = {
+    avatar: { width: 500, height: 500 },
+    coverImage: { width: 1920, height: 1080 },
+    optionalImages: { width: 720, height: 720 },
+  };
+
+  static multerStorage = multer.memoryStorage();
   static filterImageFiles(req, file, cb) {
-    // if (file.mimetype.startsWith("image")) cb(null, true);
-    // else
-    //   errIdentifier.generateError(cb, "Please Upload Only Images", 400, true);
+    if (file.mimetype.startsWith("image")) cb(null, true);
+    else
+      errIdentifier.generateError(cb, "Please Upload Only Images", 400, true);
   }
 
   static upload = multer({
@@ -22,46 +22,51 @@ module.exports = class Image {
     fileFilter: Image.filterImageFiles,
   });
 
-  static async renameResize(file, img) {
-    // const prefix = img.width === img.height ? "user" : "concert";
-    // file.filename = `${prefix}-${req.user.id}-${Date.now()}.jpeg`;
-    // await sharp(file.buffer)
-    //   .resize(img.width, img.height)
-    //   .toFormat("jpeg")
-    //   .jpeg({ quality: 90 })
-    //   .toFile(`public/img/${prefix}/${req.file.filename}`);
-  }
+  resize = async (file) => {
+    const folder = file.fieldname === "avatar" ? "users" : "concerts";
+    await sharp(file.buffer)
+      .resize(
+        this.imageTypes[file.fieldname].width,
+        this.imageTypes[file.fieldname].height
+      )
+      .toFormat("jpeg")
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/${folder}/${file.filename}`);
+  };
 
-  static configureImages(img) {
+  renameResize = async (req) => {
+    if (req.file) {
+      req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+      await this.resize(req.file);
+    } else if (req.files) {
+      for (const key in req.files) {
+        if (Object.prototype.hasOwnProperty.call(req.files, key)) {
+          req.files[key].forEach(async (img, idx) => {
+            img.filename = `${key}-${req.user.id}-${idx}-${Date.now()}.jpeg`;
+            await this.resize(img);
+          });
+        }
+      }
+    }
+  };
+
+  configureImages() {
     return async (req, _, next) => {
       if (!req.file && !req.files) return next();
-
-      // const prefix = img.width === img.height ? "user" : "concert";
-      if (img.imageType === "userPhoto") {
-        // renameResize(req.file, img);
-        // console.log(req.file);
-        // req.file.filename = `${prefix}-${req.user.id}-${Date.now()}.jpeg`;
-        // await sharp(req.file.buffer)
-        //   .resize(img.width, img.height)
-        //   .toFormat("jpeg")
-        //   .jpeg({ quality: 90 })
-        //   .toFile(`public/img/users/${req.file.filename}`);
-      } else if (img.imageType === "coverImage") {
-        console.log(req.files.coverImage);
-      }
+      await this.renameResize(req);
       next();
     };
   }
 
-  // static async resizeProfilePhotos(req, res, next) {
-  //   if (!req.file) return next();
+  deletePrevious() {
+    return errIdentifier.catchAsync(async (req, res, next) => {
+      if (req.file) {
+        const Model = getModel(req.user.role);
+        const user = await Model.findById(req.user.id);
+        const filename = user.coverImage;
+      }
+    });
+  }
+}
 
-  //   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-  //   await sharp(req.file.buffer)
-  //     .resize(this.width, this.height)
-  //     .toFormat("jpeg")
-  //     .jpeg({ quality: 90 })
-  //     .toFile(`public/img/users/${req.file.filename}`);
-  //   next();
-  // }
-};
+module.exports = Image;

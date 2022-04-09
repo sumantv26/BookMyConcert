@@ -31,4 +31,5 @@ const common = {
     immutable: true,
   },
 };
+
 module.exports = common;

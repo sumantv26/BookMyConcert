@@ -94,7 +94,6 @@ exports.userUpdateIp = (req, _, next) => {
     if (immutableUserProps.includes(key) || !keys.includes(key)) continue;
     userSchema[key] = userValidation[key];
   }
-  console.log(req.body);
   const validationSchema = Joi.object({ ...userSchema });
   validateHandler(validationSchema, req.body, next);
 };

@@ -1,19 +1,34 @@
 const Concert = require("../models/ConcertModels/Concert");
 // const Manager = require("../models/UserModels/Manager");
 const errIdentifier = require("../utils/errIdentifier");
-// const Image = require("../middleware/Image");
+const imageController = require("./imageController");
 
-// exports.uploadCoverImage = Image.upload.single("coverImage");
-// exports.uploadImages = Image.upload.array("images", 4);
-// exports.uploadConcertImages = Image.upload.fields([
-//   { name: "coverImage", maxCount: 1 },
-//   { name: "images", maxCount: 4 },
-// ]);
+exports.uploadConcertImages = imageController.upload.fields([
+  { name: "coverImage", maxCount: 1 },
+  { name: "optionalImages", maxCount: 4 },
+]);
+
+const updateImages = (req) => {
+  for (const key in req.files) {
+    if (Object.prototype.hasOwnProperty.call(req.files, key)) {
+      if (req.files[key].length === 1) {
+        req.body[key] = req.files[key][0].filename;
+      } else if (req.files[key].length > 1) {
+        req.body[key] = [];
+        req.files[key].forEach((img) => {
+          req.body[key].push(img.filename);
+        });
+      }
+    }
+  }
+};
 
 exports.createPost = errIdentifier.catchAsync(async (req, res, next) => {
-  // if (!req.files)
-  //   errIdentifier.generateError(next, "Cover Image is required", 400);
-  // req.body.coverImage = req.file.filename;
+  if (!req.files)
+    errIdentifier.generateError(next, "Cover Image is required", 400);
+
+  updateImages(req);
+
   const newPost = await Concert.create(req.body);
   return res.status(201).json({
     status: "success",
@@ -48,10 +63,7 @@ exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
 });
 
 exports.updatePost = errIdentifier.catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  if (req.file) {
-    // req.body.images = req.file.map((img) => img);
-  }
+  if (req.files) updateImages(req);
 
   const currPost = await Concert.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
