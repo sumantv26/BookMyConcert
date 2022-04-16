@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // app.use("/api", images);
 app.use("/user", userRouter);
 app.use("/concert", concertRouter);
-// app.use("/exp", expRouter);
 // app.use("/post", postRouter);
 // app.use("/admin", adminRouter);
 

@@ -14,6 +14,21 @@ const pointSchema = new mongoose.Schema({
   address: String,
   city: {
     type: String,
+    // enum: [
+    //   "delhi",
+    //   "mumbai",
+    //   "kolkata",
+    //   "chennai",
+    //   "bangalore",
+    //   "hyderabad",
+    //   "ahemdabad",
+    //   "pune",
+    //   "lucknow",
+    //   "surat",
+    //   "jaipur",
+    //   "udaipur",
+    //   "kanpur",
+    // ],
     required: true,
   },
 });

@@ -1,10 +1,10 @@
 const Joi = require("joi");
-// const lodash = require("lodash");
 Joi.objectId = require("joi-objectid")(Joi);
+// const lodash = require("lodash");
 
 // const util = require("util");
+const errIdentifier = require("../utils/errIdentifier");
 
-// const errIdentifier = require("../utils/errIdentifier");
 const getModel = require("../utils/getModel");
 
 const cutOffDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 18);

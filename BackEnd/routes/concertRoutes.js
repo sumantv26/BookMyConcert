@@ -26,12 +26,16 @@ router.post(
 
 router
   .route("/:id")
-  .patch(
-    concertController.uploadConcertImages,
-    validate.concertUpdateIp,
-    imageController.configureImages,
-    concertController.updatePost
-  )
+  .patch(validate.concertUpdateIp, concertController.updatePost)
   .delete(concertController.deletePost);
+
+router.patch(
+  "/:id/:imgName",
+  concertController.uploadConcertImages,
+  imageController.configureImages,
+  concertController.updatePostImage
+);
+
+router.patch("/:id/upload-image", concertController.uploadImage);
 
 module.exports = router;

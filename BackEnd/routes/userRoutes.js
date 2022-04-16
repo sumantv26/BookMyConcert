@@ -21,14 +21,17 @@ router.patch(
 
 router.use(authController.protected);
 
+router.get("/me", userController.getMe);
+
 router.patch(
-  "/update",
+  "/me/update",
   userController.updateProfilePhoto,
   validate.userUpdateIp,
   imageController.configureImages,
-  // imageController.deletePrevious,
   userController.updateUser
 );
+
+router.delete("/me/remove-image", userController.removeImage);
 
 router.use("/", customerRouter);
 router.use("/admin", adminRouter);

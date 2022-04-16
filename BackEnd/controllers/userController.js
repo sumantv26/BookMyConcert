@@ -6,8 +6,43 @@ const Manager = require("../models/UserModels/Manager");
 const Report = require("../models/ConcertModels/Report");
 const Customer = require("../models/UserModels/Customer");
 const imageController = require("./imageController");
+const deleteFile = require("../utils/deleteFile");
 
+const filePath = `${__dirname}/../public/img/users`;
 exports.updateProfilePhoto = imageController.upload.single("avatar");
+
+exports.getMe = errIdentifier.catchAsync(async (req, res, next) => {
+  const Model = getModel(req.user.role);
+  const user = await Model.findById(req.user.id).select(
+    "-__v -password -isApproved"
+  );
+  if (!user) return errIdentifier.generateError(next, "User not found", 404);
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
+exports.removeImage = errIdentifier.catchAsync(async (req, res, next) => {
+  const Model = getModel(req.user.role);
+  const user = await Model.findById(req.user.id);
+  req.user.avatar = user.avatar;
+  if (!user.avatar !== "default.jpeg") await deleteFile(filePath, user.avatar);
+  const updatedUser = await Model.findByIdAndUpdate(
+    req.user.id,
+    { $unset: { avatar: "" } },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).select("-__v -password -isApproved");
+  if (!updatedUser)
+    return errIdentifier.generateError(next, "Unable to remove image", 400);
+  res.status(200).json({
+    status: "success",
+    data: updatedUser,
+  });
+});
 
 exports.updateUser = errIdentifier.catchAsync(async (req, res, next) => {
   if (req.file) req.body.avatar = req.file.filename;

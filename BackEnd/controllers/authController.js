@@ -99,14 +99,14 @@ exports.protected = errIdentifier.catchAsync(async (req, res, next) => {
   next();
 });
 
-const capitalizeFirstLetter = function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
+// const capitalizeFirstLetter = function capitalizeFirstLetter(string) {
+//   return string.charAt(0).toUpperCase() + string.slice(1);
+// };
 
 exports.restrictTo = (...roles) => {
   return (req, _, next) => {
     let rolesStr = "";
-    for (const role of roles) rolesStr += capitalizeFirstLetter(role) + "s ";
+    for (const role of roles) rolesStr += role + "s";
     rolesStr = rolesStr.split(" ").join(", ");
     if (!roles.includes(req.user.role))
       return errIdentifier.generateError(

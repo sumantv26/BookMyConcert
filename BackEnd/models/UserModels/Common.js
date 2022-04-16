@@ -23,7 +23,7 @@ const common = {
     type: String,
     required: true,
   },
-  avatar: { type: String, default: "default.jpg" },
+  avatar: { type: String, default: "default.jpeg" },
   role: {
     type: String,
     required: true,
