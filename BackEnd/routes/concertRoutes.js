@@ -30,12 +30,18 @@ router
   .delete(concertController.deletePost);
 
 router.patch(
+  "/:id/upload-image",
+  concertController.uploadConcertImages,
+  concertController.validateUploadIp,
+  imageController.configureImages,
+  concertController.uploadImage
+);
+
+router.patch(
   "/:id/:imgName",
   concertController.uploadConcertImages,
   imageController.configureImages,
   concertController.updatePostImage
 );
-
-router.patch("/:id/upload-image", concertController.uploadImage);
 
 module.exports = router;

@@ -136,7 +136,42 @@ exports.updatePostImage = errIdentifier.catchAsync(async (req, res, next) => {
   });
 });
 
-exports.uploadImage = errIdentifier.catchAsync(async (req, res, next) => {});
+exports.validateUploadIp = errIdentifier.catchAsync(async (req, res, next) => {
+  if (!req.files?.optionalImages || req.files.optionalImages.length > 1) {
+    return errIdentifier.generateError(next, "Unable to upload image", 400);
+  }
+  const concert = await Concert.findById(req.params.id);
+  if (!concert)
+    return errIdentifier.generateError(
+      next,
+      "This concert doesn't exits. Try to create one",
+      404
+    );
+  const opImgArrLen = concert.optionalImages.length;
+  if (opImgArrLen >= 4)
+    return errIdentifier.generateError(
+      next,
+      "Unable to upload image. Try updating it.",
+      400
+    );
+  req.files.index = opImgArrLen;
+  next();
+});
+
+exports.uploadImage = errIdentifier.catchAsync(async (req, res, next) => {
+  const filename = req.files.optionalImages[0].filename;
+  const concert = await Concert.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: { optionalImages: filename },
+    },
+    { new: true }
+  );
+  res.status(200).json({
+    status: "success",
+    data: concert,
+  });
+});
 
 const deleteImages = async (post) => {
   const imgKeys = ["coverImage", "optionalImages"];

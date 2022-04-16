@@ -36,12 +36,19 @@ const renameResize = async (req) => {
     req.file.filename = `user-${req.user.id}.jpeg`;
     await resize(req.file);
   } else if (req.files) {
-    for (const key in req.files) {
-      if (Object.prototype.hasOwnProperty.call(req.files, key)) {
-        req.files[key].forEach(async (file, idx) => {
-          file.filename = `${key}-${req.user.id}-${idx}-${Date.now()}.jpeg`;
-          await resize(file);
-        });
+    if (req.files?.index) {
+      req.files.optionalImages[0].filename = `${
+        req.files.optionalImages[0].fieldname
+      }-${req.user.id}-${req.files.index}-${Date.now()}.jpeg`;
+      await resize(req.files.optionalImages[0]);
+    } else {
+      for (const key in req.files) {
+        if (Object.prototype.hasOwnProperty.call(req.files, key)) {
+          req.files[key].forEach(async (file, idx) => {
+            file.filename = `${key}-${req.user.id}-${idx}-${Date.now()}.jpeg`;
+            await resize(file);
+          });
+        }
       }
     }
   }
