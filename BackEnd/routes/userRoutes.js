@@ -34,6 +34,7 @@ router.patch(
 );
 
 router.delete("/me/remove-image", userController.removeImage);
+router.delete("/me", userController.deleteMe);
 
 router.use("/admin", adminRouter);
 router.use("/", customerRouter);

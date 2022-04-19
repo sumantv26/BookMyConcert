@@ -24,11 +24,15 @@ exports.getMe = errIdentifier.catchAsync(async (req, res, next) => {
   });
 });
 
+const deleteImage = async (Model, id) => {
+  const user = await Model.findById(id);
+  if (user.avatar !== "default.jpeg") await deleteFile(filePath, user.avatar);
+  return user;
+};
+
 exports.removeImage = errIdentifier.catchAsync(async (req, res, next) => {
   const Model = getModel(req.user.role);
-  const user = await Model.findById(req.user.id);
-  req.user.avatar = user.avatar;
-  if (!user.avatar !== "default.jpeg") await deleteFile(filePath, user.avatar);
+  await deleteImage(Model, req.user.id);
   const updatedUser = await Model.findByIdAndUpdate(
     req.user.id,
     { $unset: { avatar: "" } },
@@ -157,5 +161,17 @@ exports.getCities = errIdentifier.catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: cities,
+  });
+});
+
+exports.deleteMe = errIdentifier.catchAsync(async (req, res, next) => {
+  const Model = getModel(req.user.role);
+  const user = await deleteImage(Model, req.user.id);
+  if (req.user.role === "manager")
+    await Report.findByIdAndDelete(user.reportId);
+  await Model.findByIdAndDelete(user._id);
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });
