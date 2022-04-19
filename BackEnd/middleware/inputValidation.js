@@ -5,6 +5,7 @@ Joi.objectId = require("joi-objectid")(Joi);
 // const util = require("util");
 const errIdentifier = require("../utils/errIdentifier");
 
+const Cities = require("../models/ConcertModels/Cities");
 const getModel = require("../utils/getModel");
 
 const cutOffDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 18);
@@ -108,12 +109,11 @@ const concertSchema = {
     to: Joi.date().greater(Joi.ref("from")).required(),
   }),
   venue: Joi.object({
-    coordinates: Joi.array()
-      .ordered(
-        Joi.number().min(-180).max(180).required(),
-        Joi.number().min(-90).max(90).required()
-      )
-      .length(2),
+    coordinates: Joi.object({
+      type: Joi.string().valid("Point").required(),
+      longitude: Joi.number().min(-180).max(180).required(),
+      latitude: Joi.number().min(-90).max(90).required(),
+    }),
     address: Joi.string().min(10).max(200),
     city: Joi.string().max(45).required(),
   }),
@@ -122,18 +122,27 @@ const concertSchema = {
   postedBy: Joi.objectId().required(),
 };
 
-exports.concertIp = (req, _, next) => {
-  // req.body.timing.from = new Date(`${req.body.date} ${req.body.timing.from}`);
-  // req.body.timing.to = new Date(`${req.body.date} ${req.body.timing.to}`);
+exports.concertIp = errIdentifier.catchAsync(async (req, _, next) => {
+  if (!req.body?.venue?.city)
+    return errIdentifier.generateError(next, "City must be provided", 400);
 
-  // req.body.date = new Date(req.body.date);
+  req.body.venue.city = req.body?.venue?.city.toLowerCase();
+  const city = await Cities.findOne({ name: req.body.venue.city });
+  if (!city)
+    return errIdentifier.generateError(
+      next,
+      "Please, select city from the options below",
+      400
+    );
+
   req.body.timing.from = new Date(req.body.timing.from);
   req.body.timing.to = new Date(req.body.timing.to);
   req.body.postedBy = req.user.id;
+  req.body.venue.coordinates = city.coordinates;
 
   const validationSchema = Joi.object({ ...concertSchema });
   validateHandler(validationSchema, req.body, next);
-};
+});
 
 const unUpdatedFields = ["_id", "postedBy", "avgRating", "noOfRatings", "__v"];
 

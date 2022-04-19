@@ -2,33 +2,24 @@ const mongoose = require("mongoose");
 // const Review = require("../ConcertModels/Review");
 
 const pointSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    default: "Point",
-    enum: ["Point"],
-  },
   coordinates: {
-    type: [Number],
-    required: true,
+    type: {
+      type: String,
+      default: "Point",
+      enum: ["Point"],
+    },
+    longitude: {
+      type: Number,
+      required: true,
+    },
+    latitude: {
+      type: Number,
+      required: true,
+    },
   },
   address: String,
   city: {
     type: String,
-    // enum: [
-    //   "delhi",
-    //   "mumbai",
-    //   "kolkata",
-    //   "chennai",
-    //   "bangalore",
-    //   "hyderabad",
-    //   "ahemdabad",
-    //   "pune",
-    //   "lucknow",
-    //   "surat",
-    //   "jaipur",
-    //   "udaipur",
-    //   "kanpur",
-    // ],
     required: true,
   },
 });

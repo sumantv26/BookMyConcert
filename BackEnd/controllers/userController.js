@@ -2,8 +2,9 @@ const getModel = require("../utils/getModel");
 const errIdentifier = require("../utils/errIdentifier");
 const Concert = require("../models/ConcertModels/Concert");
 const Reasons = require("../models/ConcertModels/Reasons");
-const Manager = require("../models/UserModels/Manager");
 const Report = require("../models/ConcertModels/Report");
+const Cities = require("../models/ConcertModels/Cities");
+const Manager = require("../models/UserModels/Manager");
 const Customer = require("../models/UserModels/Customer");
 const imageController = require("./imageController");
 const deleteFile = require("../utils/deleteFile");
@@ -61,6 +62,14 @@ exports.updateUser = errIdentifier.catchAsync(async (req, res, next) => {
 exports.reportManager = errIdentifier.catchAsync(async (req, res, next) => {
   const concertId = req.params.concertId;
 
+  const concert = await Concert.findById(concertId);
+  if (!concert)
+    return errIdentifier.generateError(
+      next,
+      "You cannot report this concert as it doesn't exist.",
+      404
+    );
+
   // Checking if customer is already reported
   const isReported = await Customer.findOne(
     {
@@ -79,13 +88,7 @@ exports.reportManager = errIdentifier.catchAsync(async (req, res, next) => {
 
   const currTime = Date.now();
   // Reports can only be reported after concert is over
-  const concert = await Concert.findById(concertId);
-  if (!concert)
-    return errIdentifier.generateError(
-      next,
-      "You can not report concert manager. This concert doesn't exist.",
-      404
-    );
+
   const endTime = concert.timing.to.getTime();
   if (currTime <= endTime)
     return errIdentifier.generateError(
@@ -146,5 +149,13 @@ exports.getReasons = errIdentifier.catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: allReasons,
+  });
+});
+
+exports.getCities = errIdentifier.catchAsync(async (req, res, next) => {
+  const cities = await Cities.find({}).select("-__v");
+  res.status(200).json({
+    status: "success",
+    data: cities,
   });
 });

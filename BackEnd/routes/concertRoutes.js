@@ -24,6 +24,8 @@ router.post(
   concertController.createPost
 );
 
+router.use("/:id", concertController.verifyConcert);
+
 router
   .route("/:id")
   .patch(validate.concertUpdateIp, concertController.updatePost)

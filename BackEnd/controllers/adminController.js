@@ -91,9 +91,6 @@ exports.getReportedManagers = errIdentifier.catchAsync(
 
     const final = await Report.populate(populatedManager, {
       path: "reportTypes.reasonId",
-      options: {
-        select: { title: 1 },
-      },
     });
     res.status(200).json({
       status: "success",

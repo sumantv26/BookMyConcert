@@ -1,10 +1,31 @@
 const Concert = require("../models/ConcertModels/Concert");
-// const Manager = require("../models/UserModels/Manager");
+const Manager = require("../models/UserModels/Manager");
+const Customer = require("../models/UserModels/Customer");
+const Reviews = require("../models/ConcertModels/Review");
 const errIdentifier = require("../utils/errIdentifier");
 const imageController = require("./imageController");
 const deleteFile = require("../utils/deleteFile");
+const Review = require("../models/ConcertModels/Review");
 
 const filePath = `${__dirname}/../public/img/concerts`;
+
+exports.verifyConcert = errIdentifier.catchAsync(async (req, res, next) => {
+  const concert = await Concert.findById(req.params.id);
+  if (!concert)
+    return errIdentifier.generateError(
+      next,
+      "This concert doesn't exits. Try to create one",
+      404
+    );
+  if (concert.postedBy.toString() !== req.user.id)
+    errIdentifier.generateError(
+      next,
+      "You cannot modify this concert as you haven't created it.",
+      403
+    );
+  next();
+});
+
 exports.uploadConcertImages = imageController.upload.fields([
   { name: "coverImage", maxCount: 1 },
   { name: "optionalImages", maxCount: 4 },
@@ -39,19 +60,22 @@ exports.createPost = errIdentifier.catchAsync(async (req, res, next) => {
 });
 
 exports.getPost = errIdentifier.catchAsync(async (req, res, next) => {
-  const fetchedPost = await Concert.findById(req.params.id).populate({
+  const populateReviews = await Concert.findById(req.params.id).populate({
     path: "reviews",
-    options: { sort: { rating: -1, updatedAt: -1 } },
+    options: {
+      sort: { rating: -1, updatedAt: -1 },
+    },
+    populate: {
+      path: "customerId",
+      options: {
+        select: { name: 1, avatar: 1 },
+      },
+    },
   });
-  if (!fetchedPost)
-    return errIdentifier.generateError(
-      next,
-      "This concert doesn't exits. Try to create one",
-      404
-    );
+
   return res.status(200).json({
     status: "success",
-    data: fetchedPost,
+    data: populateReviews,
   });
 });
 
@@ -69,12 +93,7 @@ exports.updatePost = errIdentifier.catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-  if (!currPost)
-    return errIdentifier.generateError(
-      next,
-      "This concert doesn't exits. Try to create one",
-      404
-    );
+
   return res.status(200).json({
     status: "success",
     data: currPost,
@@ -141,12 +160,7 @@ exports.validateUploadIp = errIdentifier.catchAsync(async (req, res, next) => {
     return errIdentifier.generateError(next, "Unable to upload image", 400);
   }
   const concert = await Concert.findById(req.params.id);
-  if (!concert)
-    return errIdentifier.generateError(
-      next,
-      "This concert doesn't exits. Try to create one",
-      404
-    );
+
   const opImgArrLen = concert.optionalImages.length;
   if (opImgArrLen >= 4)
     return errIdentifier.generateError(
@@ -186,13 +200,11 @@ const deleteImages = async (post) => {
 
 exports.deletePost = errIdentifier.catchAsync(async (req, res, next) => {
   const concert = await Concert.findById(req.params.id);
-  if (!concert) {
-    return errIdentifier.generateError(
-      next,
-      "This concert doesn't exits. Try to create one",
-      404
-    );
-  }
+  await Customer.updateOne(
+    { isReported: concert._id },
+    { $pull: { isReported: concert._id } }
+  );
+  await Review.deleteMany({ concertId: req.params.id });
   await deleteImages(concert);
   await Concert.deleteOne({ _id: concert._id });
   return res.status(204).json({

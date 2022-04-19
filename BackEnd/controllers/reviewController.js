@@ -3,29 +3,26 @@ const mongoose = require("mongoose");
 const Review = require("../models/ConcertModels/Review");
 
 exports.createReview = errIdentifier.catchAsync(async (req, res, next) => {
-  // const countReviews = await Review.aggregate(
-  //   [
-  //     {
-  //       $match: {
-  //         $and: [
-  //           { customerId: mongoose.Types.ObjectId(req.user.id) },
-  //           { concertId: mongoose.Types.ObjectId(req.params.concertId) },
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       $count: "noOfReviews",
-  //     },
-  //   ],
-  //   { explain: true }
-  // );
-
-  // if (countReviews[0].noOfReviews >= 1)
-  //   return errIdentifier.generateError(
-  //     next,
-  //     "You can't post more than 1 review on the concert",
-  //     403
-  //   );
+  const countReviews = await Review.aggregate([
+    {
+      $match: {
+        $and: [
+          { customerId: mongoose.Types.ObjectId(req.user.id) },
+          { concertId: mongoose.Types.ObjectId(req.params.concertId) },
+        ],
+      },
+    },
+    {
+      $count: "noOfReviews",
+    },
+  ]);
+  console.log(countReviews);
+  if (countReviews[0]?.noOfReviews >= 1)
+    return errIdentifier.generateError(
+      next,
+      "You can't post more than 1 review on the concert",
+      403
+    );
 
   const newReview = await Review.create({
     review: req.body?.review,

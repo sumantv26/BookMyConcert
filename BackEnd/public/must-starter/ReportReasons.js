@@ -30,11 +30,9 @@ const reasonsArr = [
 
 const ReportReasons = mongoose.model("report_reason", reasonSchema);
 
-const createInDB = async () => {
-  for (reason of reasonsArr) {
+(async () => {
+  for (const reason of reasonsArr) {
     await ReportReasons.create({ title: reason });
   }
   process.exit();
-};
-
-createInDB();
+})();

@@ -19,6 +19,8 @@ router.patch(
   authController.resetPassword
 );
 
+router.get("/cities", userController.getCities);
+
 router.use(authController.protected);
 
 router.get("/me", userController.getMe);
@@ -33,7 +35,7 @@ router.patch(
 
 router.delete("/me/remove-image", userController.removeImage);
 
-router.use("/", customerRouter);
 router.use("/admin", adminRouter);
+router.use("/", customerRouter);
 
 module.exports = router;
