@@ -50,8 +50,8 @@ const Cities = mongoose.model("cities", citySchema);
     `https://parseapi.back4app.com/classes/Indiacities_india_cities_database?count=1&limit=20&order=-population&keys=ascii_name,latitude,longitude,createdAt&where=${where}`,
     {
       headers: {
-        "X-Parse-Application-Id": "yMMyWP3mSj51OeUFb8enqQ5zdYQu0V2XAAx67Dq5", // This is your app's application id
-        "X-Parse-REST-API-Key": "K5hUeP088ezVmiOCOh7mGCbRRTo1dlnCID8HYOyR", // This is your app's REST API key
+        "X-Parse-Application-Id": "yMMyWP3mSj51OeUFb8enqQ5zdYQu0V2XAAx67Dq5",
+        "X-Parse-REST-API-Key": "K5hUeP088ezVmiOCOh7mGCbRRTo1dlnCID8HYOyR",
       },
     }
   );

@@ -1,4 +1,3 @@
-// require("express-async-errors");
 const dotenv = require("dotenv");
 
 process.on("uncaughtException", (err) => {
@@ -10,11 +9,6 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 
 const app = require("./startup/app");
-// require("./startup/config")();
-// const Joi = require("joi");
-// Joi.objectId = require("joi-objectid")(Joi);
-
-// require("./startup/app")();
 
 const PORT = process.env.PORT || 5000;
 

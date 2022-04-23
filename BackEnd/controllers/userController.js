@@ -1,5 +1,7 @@
 const getModel = require("../utils/getModel");
+const deleteFile = require("../utils/deleteFile");
 const errIdentifier = require("../utils/errIdentifier");
+const Users = require("../models/UserModels/AllUsers");
 const Concert = require("../models/ConcertModels/Concert");
 const Reasons = require("../models/ConcertModels/Reasons");
 const Report = require("../models/ConcertModels/Report");
@@ -7,7 +9,6 @@ const Cities = require("../models/ConcertModels/Cities");
 const Manager = require("../models/UserModels/Manager");
 const Customer = require("../models/UserModels/Customer");
 const imageController = require("./imageController");
-const deleteFile = require("../utils/deleteFile");
 
 const filePath = `${__dirname}/../public/img/users`;
 exports.updateProfilePhoto = imageController.upload.single("avatar");
@@ -169,6 +170,7 @@ exports.deleteMe = errIdentifier.catchAsync(async (req, res, next) => {
   const user = await deleteImage(Model, req.user.id);
   if (req.user.role === "manager")
     await Report.findByIdAndDelete(user.reportId);
+  await Users.findByIdAndDelete(user._id);
   await Model.findByIdAndDelete(user._id);
   res.status(204).json({
     status: "success",

@@ -1,11 +1,8 @@
 const express = require("express");
 const path = require("path");
-// const images = require("../routes/images");
 const errIdentifier = require("../utils/errIdentifier");
 const userRouter = require("../routes/userRoutes");
 const concertRouter = require("../routes/concertRoutes");
-// const expRouter = require("../routes/expRouter");
-// const adminRouter = require("../routes/adminRoutes");
 const globalErrorHandler = require("../controllers/errorController");
 require("./connectToDB")();
 

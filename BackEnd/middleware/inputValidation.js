@@ -1,14 +1,15 @@
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 // const lodash = require("lodash");
-
 // const util = require("util");
-const errIdentifier = require("../utils/errIdentifier");
 
 const Cities = require("../models/ConcertModels/Cities");
 const getModel = require("../utils/getModel");
+const errIdentifier = require("../utils/errIdentifier");
 
-const cutOffDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 18);
+const get18Years = () => {
+  return new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 18);
+};
 
 const userValidation = {
   name: Joi.string().trim().min(7).max(30).required(),
@@ -22,7 +23,7 @@ const userValidation = {
     .required()
     .label("Confirm password")
     .options({ messages: { "any.only": "{{#label}} does not match" } }),
-  birthDate: Joi.date().max(cutOffDate).required(),
+  birthDate: Joi.date().max(get18Years()).required(),
   gender: Joi.string().valid("male", "female", "other").required(),
   role: Joi.string().valid("customer", "manager", "admin").required(),
   contactNumber: Joi.string()
@@ -103,7 +104,6 @@ const concertSchema = {
   name: Joi.string().min(7).max(30).required(),
   description: Joi.string().min(10).max(200).required(),
   artist: Joi.array().items(Joi.string().required()).max(3),
-  // date: Joi.date().greater("now"),
   timing: Joi.object({
     from: Joi.date().greater("now").required(),
     to: Joi.date().greater(Joi.ref("from")).required(),

@@ -1,11 +1,11 @@
 const express = require("express");
 
+const adminRouter = require("./adminRoutes");
 const customerRouter = require("./customerRoutes");
 const validate = require("../middleware/inputValidation");
 const authController = require("../controllers/authController");
 const userController = require("../controllers/userController");
 const imageController = require("../controllers/imageController");
-const adminRouter = require("./adminRoutes");
 
 const router = express.Router();
 

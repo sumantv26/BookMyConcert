@@ -1,9 +1,6 @@
-const fs = require("fs");
-
 const multer = require("multer");
 const sharp = require("sharp");
 const errIdentifier = require("../utils/errIdentifier");
-const getModel = require("../utils/getModel");
 
 const imageTypes = {
   avatar: { width: 500, height: 500 },

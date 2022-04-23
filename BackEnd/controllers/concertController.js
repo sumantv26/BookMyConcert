@@ -1,11 +1,12 @@
 const Concert = require("../models/ConcertModels/Concert");
-const Manager = require("../models/UserModels/Manager");
+// const Manager = require("../models/UserModels/Manager");
 const Customer = require("../models/UserModels/Customer");
-const Reviews = require("../models/ConcertModels/Review");
+// const Reviews = require("../models/ConcertModels/Review");
 const errIdentifier = require("../utils/errIdentifier");
 const imageController = require("./imageController");
 const deleteFile = require("../utils/deleteFile");
 const Review = require("../models/ConcertModels/Review");
+// const { query } = require("express");
 
 const filePath = `${__dirname}/../public/img/concerts`;
 
@@ -79,13 +80,42 @@ exports.getPost = errIdentifier.catchAsync(async (req, res, next) => {
   });
 });
 
+const filterFields = (obj) => {
+  // const includedFields = ["search", "artist", "city", "price", "avgRating"];
+  // for (const key in obj) if (!includedFields.includes(key)) delete obj[key];
+};
+
 exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
-  // const allPosts = await Concert.find();
-  // return res.status(200).json({
-  //   length: allPosts.length,
-  //   status: "success",
-  //   data: allPosts,
-  // });
+  // filterFields(req.query);
+  // const queryObj = { ...req.query };
+  // let queryStr = JSON.stringify(queryObj);
+  // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+  // console.log(queryStr);
+  // const concerts = Concert.find(JSON.parse(queryStr));
+  // console.log(concerts);
+  const allPosts = await Concert.aggregate([
+    {
+      $match: {
+        "timing.from": { $gt: new Date(Date.now()) },
+      },
+    },
+    {
+      $addFields: {
+        isTag: {},
+        isMatched: {
+          $regexMatch: {
+            input: "$name",
+            regex: `${req.query.name}`,
+          },
+        },
+      },
+    },
+  ]);
+  return res.status(200).json({
+    length: allPosts.length,
+    status: "success",
+    data: allPosts,
+  });
 });
 
 exports.updatePost = errIdentifier.catchAsync(async (req, res, next) => {

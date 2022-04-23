@@ -69,7 +69,6 @@ const schema = new mongoose.Schema(
     coverImage: {
       type: String,
       required: true,
-      unique: true,
     },
     optionalImages: {
       type: [String],
@@ -106,6 +105,8 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.index({ "timing.from": 1 });
+
 schema.virtual("reviews", {
   ref: "review",
   foreignField: "concertId",
@@ -113,5 +114,12 @@ schema.virtual("reviews", {
 });
 
 const Concerts = mongoose.model("Concerts", schema);
+
+// const pipeline = [
+//   { $match: { price: { $lt: 99 } } },
+//   { $set: { isActive: false } },
+// ];
+
+// Concerts.watch().on("change", (data) => console.log(data));
 
 module.exports = Concerts;

@@ -1,13 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-// const config = require("config");
 const util = require("util");
 
-const Users = require("../models/UserModels/AllUsers");
+const sendEmail = require("../utils/email");
 const getModel = require("../utils/getModel");
 const errIdentifier = require("../utils/errIdentifier");
-const sendEmail = require("../utils/email");
+const Users = require("../models/UserModels/AllUsers");
 
 const generateAuthToken = (user) => {
   const userData = {
@@ -99,10 +98,6 @@ exports.protected = errIdentifier.catchAsync(async (req, res, next) => {
   next();
 });
 
-// const capitalizeFirstLetter = function capitalizeFirstLetter(string) {
-//   return string.charAt(0).toUpperCase() + string.slice(1);
-// };
-
 exports.restrictTo = (...roles) => {
   return (req, _, next) => {
     let rolesStr = "";
@@ -186,54 +181,3 @@ exports.resetPassword = errIdentifier.catchAsync(async (req, res, next) => {
     token,
   });
 });
-
-// const role = data.role;
-// let Model;
-// switch (role) {
-//   case "user":
-//     Model = Customer;
-//     if (await Manager.findOne({ email: data.email }))
-//       return res
-//         .status(400)
-//         .send("You are already registered with different role. ");
-//     break;
-//   case "concert manager":
-//     Model = Manager;
-//     if (await Customer.findOne({ email: data.email }))
-//       return res
-//         .status(400)
-//         .send("You are already registered with different role. ");
-//     break;
-//   case "admin":
-//     Model = Admin;
-//     break;
-// }
-
-//login
-// let user = await Model.findOne({ email: req.body.email });
-// if (user) return res.status(400).send("You are already registered");
-
-// user = new Model(req.body);
-// const salt = await bcrypt.genSalt(10);
-// user.password = await bcrypt.hash(user.password, salt);
-// await user.save();
-// let customer = await Customer.findOne({ email: req.body.email });
-// if (
-//   customer &&
-//   (await bcrypt.compare(req.body.password, customer.password))
-// ) {
-// res.send(generateAuthToken(customer, "customer"));
-// return;
-// }
-// let manager = await Manager.findOne({ email: req.body.email });
-// if (manager && (await bcrypt.compare(req.body.password, manager.password))) {
-//   res.send(generateAuthToken(manager, "manager"));
-//   return;
-// }
-// let admin = await Admin.findOne({ email: req.body.email });
-
-// if (admin && (await bcrypt.compare(req.body.password, admin.password))) {
-//   res.send(generateAuthToken(admin, "admin"));
-//   return;
-// }
-// next();
