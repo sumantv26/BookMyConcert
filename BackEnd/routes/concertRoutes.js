@@ -8,6 +8,7 @@ const imageController = require("../controllers/imageController");
 const router = express.Router();
 
 router.get("/", concertController.getAllPosts);
+router.get("/recently-posted", concertController.getRecents);
 router.get("/:id", concertController.getPost);
 
 router.use(

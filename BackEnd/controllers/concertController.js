@@ -118,6 +118,25 @@ exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getRecents = errIdentifier.catchAsync(async (req, res, next) => {
+  const limit = parseInt(req.query.size) || 10;
+  const recentConcerts = await Concert.aggregate([
+    {
+      $sort: {
+        postedAt: -1,
+      },
+    },
+    {
+      $limit: limit,
+    },
+  ]);
+  res.status(200).json({
+    status: "success",
+    length: recentConcerts.length,
+    data: recentConcerts,
+  });
+});
+
 exports.updatePost = errIdentifier.catchAsync(async (req, res, next) => {
   const currPost = await Concert.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
