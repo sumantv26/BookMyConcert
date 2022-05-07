@@ -4,18 +4,13 @@ const reviewRouter = require("./reviewRoutes");
 const validate = require("../middleware/inputValidation");
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
-const bookingController = require("../controllers/bookingController");
+// const bookingController = require("../controllers/bookingController");
 
 const router = express.Router();
 
 router.use(authController.restrictTo("customer"));
 
 router.use("/review", reviewRouter);
-
-router.get(
-  "/checkout-session/:concertId",
-  bookingController.getCheckoutSession
-);
 
 router.get("/report", userController.getReasons);
 router.patch(

@@ -93,29 +93,29 @@ exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
   // console.log(queryStr);
   // const concerts = Concert.find(JSON.parse(queryStr));
   // console.log(concerts);
-  const allPosts = await Concert.aggregate([
-    {
-      $match: {
-        "timing.from": { $gt: new Date(Date.now()) },
-      },
-    },
-    {
-      $addFields: {
-        isTag: {},
-        isMatched: {
-          $regexMatch: {
-            input: "$name",
-            regex: `${req.query.name}`,
-          },
-        },
-      },
-    },
-  ]);
-  return res.status(200).json({
-    length: allPosts.length,
-    status: "success",
-    data: allPosts,
-  });
+  // const allPosts = await Concert.aggregate([
+  //   {
+  //     $match: {
+  //       "timing.from": { $gt: new Date(Date.now()) },
+  //     },
+  //   },
+  //   {
+  //     $addFields: {
+  //       isTag: {},
+  //       isMatched: {
+  //         $regexMatch: {
+  //           input: "$name",
+  //           regex: `${req.query.name}`,
+  //         },
+  //       },
+  //     },
+  //   },
+  // ]);
+  // return res.status(200).json({
+  //   length: allPosts.length,
+  //   status: "success",
+  //   data: allPosts,
+  // });
 });
 
 exports.getRecents = errIdentifier.catchAsync(async (req, res, next) => {

@@ -14,7 +14,7 @@ exports.getCheckoutSession = errIdentifier.catchAsync(
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      success_url: `${req.protocol}://${req.get("host")}/`,
+      success_url: `${req.protocol}://${req.get("host")}/user/me/bookings`,
       cancel_url: `${req.protocol}://${req.get("host")}/concert/:${
         concert._id
       }`,
@@ -38,3 +38,33 @@ exports.getCheckoutSession = errIdentifier.catchAsync(
     });
   }
 );
+
+//TODO:
+exports.getAllBookings = errIdentifier.catchAsync(async (req, res, next) => {});
+
+// async function createBookingEntry(session) {
+//   const tour = session.client_reference_id;
+//   const user = (await User.findOne({ email: session.customer_email })).id;
+//   const price = session.amount_total / 100;
+//   await Booking.create({ tour, user, price });
+// }
+
+//TODO:
+exports.webhookCheckout = errIdentifier.catchAsync(async (req, res, next) => {
+  const signature = req.headers["stripe-signature"];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRWHSEC
+    );
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+  if (event.type === "checkout.session.completed")
+    // createBookingEntry(event.data.object);
+    res.status(200).json({ recieved: true });
+});
+
+exports.getMyBookings = errIdentifier.catchAsync(async (req, res, next) => {});

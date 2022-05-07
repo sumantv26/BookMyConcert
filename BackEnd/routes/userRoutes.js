@@ -5,6 +5,7 @@ const customerRouter = require("./customerRoutes");
 const validate = require("../middleware/inputValidation");
 const authController = require("../controllers/authController");
 const userController = require("../controllers/userController");
+const bookingController = require("../controllers/bookingController");
 const imageController = require("../controllers/imageController");
 
 const router = express.Router();
@@ -24,6 +25,8 @@ router.get("/cities", userController.getCities);
 router.use(authController.protected);
 
 router.get("/me", userController.getMe);
+
+router.get("/me/bookings", bookingController.getMyBookings);
 
 router.patch(
   "/me/update",
