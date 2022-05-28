@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const errIdentifier = require("../utils/errIdentifier");
 const userRouter = require("../routes/userRoutes");
 const concertRouter = require("../routes/concertRoutes");
@@ -17,6 +18,7 @@ app.post(
   bookingController.webhookCheckout
 );
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
