@@ -73,12 +73,14 @@ exports.login = errIdentifier.catchAsync(async (req, res, next) => {
 
 exports.protected = errIdentifier.catchAsync(async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
-  if (!token)
+  if (token === "null") {
     return errIdentifier.generateError(
       next,
       "You are not LoggedIn/SignedUp.",
       401
     );
+  }
+
   const decoded = await util.promisify(jwt.verify)(
     token,
     process.env.SECRET_KEY

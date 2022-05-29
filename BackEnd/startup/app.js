@@ -4,7 +4,7 @@ const cors = require("cors");
 const errIdentifier = require("../utils/errIdentifier");
 const userRouter = require("../routes/userRoutes");
 const concertRouter = require("../routes/concertRoutes");
-const bookingRouter = require("../routes/bookingRoutes");
+// const bookingRouter = require("../routes/bookingRoutes");
 const globalErrorHandler = require("../controllers/errorController");
 const bookingController = require("../controllers/bookingController");
 

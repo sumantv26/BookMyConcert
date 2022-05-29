@@ -27,6 +27,14 @@ exports.verifyConcert = errIdentifier.catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.getAllConcerts = errIdentifier.catchAsync(async (req, res, next) => {
+  const allConcerts = await Concert.find({ postedBy: req.user.id });
+  return res.status(200).json({
+    status: "success",
+    data: allConcerts,
+  });
+});
+
 exports.uploadConcertImages = imageController.upload.fields([
   { name: "coverImage", maxCount: 1 },
   { name: "optionalImages", maxCount: 4 },

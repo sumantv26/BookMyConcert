@@ -57,7 +57,7 @@ const validateHandler = (schema, toValidate, next) => {
   const { error } = schema.validate(toValidate);
   if (error) {
     error.statusCode = 400;
-    next(error);
+    return next(error);
   }
   next();
 };
@@ -73,6 +73,7 @@ exports.signupIp = (req, _, next) => {
 
 exports.loginIp = (req, _, next) => {
   const user = req.body;
+  // console.log(user);
   const loginSchema = Joi.object({
     email: userValidation.email,
     password: userValidation.password,

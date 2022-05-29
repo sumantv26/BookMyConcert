@@ -2,7 +2,7 @@ const express = require("express");
 
 const validate = require("../middleware/inputValidation");
 const authController = require("../controllers/authController");
-const postController = require("../controllers/postController");
+const concertController = require("../controllers/concertController");
 
 const router = express.Router();
 
@@ -11,10 +11,12 @@ router.use(
   authController.isManagerApproved
 );
 
-router.post("/post", validate.concertIp, postController.createPost);
+router.get("/my-concerts", concertController.getAllConcerts);
+
+router.post("/post", validate.concertIp, concertController.createPost);
 router
   .route("/post/:id")
-  .patch(validate.postUpdateIp, postController.updatePost)
-  .delete(postController.deletePost);
+  .patch(validate.concertUpdateIp, concertController.updatePost)
+  .delete(concertController.deletePost);
 
 module.exports = router;

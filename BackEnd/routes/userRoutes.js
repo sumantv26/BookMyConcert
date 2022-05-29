@@ -1,6 +1,7 @@
 const express = require("express");
 
 const adminRouter = require("./adminRoutes");
+const managerRouter = require("./managerRoutes");
 const customerRouter = require("./customerRoutes");
 const validate = require("../middleware/inputValidation");
 const authController = require("../controllers/authController");
@@ -40,6 +41,7 @@ router.delete("/me/remove-image", userController.removeImage);
 router.delete("/me", userController.deleteMe);
 
 router.use("/admin", adminRouter);
+router.use("/manager", managerRouter);
 router.use("/", customerRouter);
 
 module.exports = router;

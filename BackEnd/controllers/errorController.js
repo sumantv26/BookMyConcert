@@ -20,6 +20,7 @@ const handleValidationErrorDB = (err) => {
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     statusCode: err.statusCode,
+    status: "fail",
     isOperational: err?.isOperational,
     message: err.message,
     stack: err.stack,
