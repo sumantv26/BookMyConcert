@@ -98,6 +98,14 @@ const schema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
+    totalSlots: {
+      type: Number,
+      default: 100,
+    },
+    bookedSlots: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     toJSON: { virtuals: true },

@@ -12,7 +12,16 @@ const schema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    creditCardNum: {
+    bankName: {
+      type: String,
+      required: true,
+    },
+    accountNum: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
+    ifscCode: {
       type: Number,
       required: true,
     },
@@ -44,4 +53,3 @@ schema.pre("save", async function (next) {
 
 const Manager = mongoose.model("Manager", schema);
 module.exports = Manager;
-

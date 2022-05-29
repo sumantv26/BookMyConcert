@@ -12,7 +12,7 @@ const get18Years = () => {
 };
 
 const userValidation = {
-  name: Joi.string().trim().min(7).max(30).required(),
+  name: Joi.string().trim().min(3).max(30).required(),
   email: Joi.string()
     .trim()
     .email({ tlds: { allow: false } })
@@ -30,7 +30,9 @@ const userValidation = {
     .length(10)
     .pattern(/^[0-9]+$/)
     .required(),
-  creditCardNum: Joi.string().length(16).required(),
+  bankName: Joi.string().required(),
+  accountNum: Joi.number().min(9).max(18),
+  ifscCode: Joi.string().length(11).required(),
   isApproved: Joi.boolean().default(false),
   banned: Joi.boolean().default(false),
 };
@@ -48,7 +50,9 @@ const commonSchema = {
 const managerSchema = {
   ...commonSchema,
   contactNumber: userValidation.contactNumber,
-  creditCardNum: userValidation.creditCardNum,
+  bankName: userValidation.bankName,
+  accountNum: userValidation.accountNum,
+  ifscCode: userValidation.ifscCode,
   isApproved: userValidation.isApproved,
   banned: userValidation.banned,
 };
@@ -120,6 +124,7 @@ const concertSchema = {
   }),
   tags: Joi.array().items(Joi.string().required()).max(3),
   price: Joi.number().integer().min(200).positive().required(),
+  totalSlots: Joi.number().required(),
   postedBy: Joi.objectId().required(),
 };
 

@@ -18,7 +18,7 @@ const schema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    noOfBooking: {
+    noOfBookings: {
       type: Number,
       default: 1,
       require: true,

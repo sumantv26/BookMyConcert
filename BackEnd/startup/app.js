@@ -4,7 +4,7 @@ const cors = require("cors");
 const errIdentifier = require("../utils/errIdentifier");
 const userRouter = require("../routes/userRoutes");
 const concertRouter = require("../routes/concertRoutes");
-// const bookingRouter = require("../routes/bookingRoutes");
+const bookingRouter = require("../routes/bookingRoutes");
 const globalErrorHandler = require("../controllers/errorController");
 const bookingController = require("../controllers/bookingController");
 
@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/user", userRouter);
 app.use("/concert", concertRouter);
-// app.use("/booking", bookingRouter);
+app.use("/booking", bookingRouter);
 
 // for all unhandled routes
 app.all("*", (req, res, next) => {
