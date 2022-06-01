@@ -106,6 +106,16 @@ const schema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    amtCollected: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
+    isWithdrawal: {
+      type: Boolean,
+      default: false,
+      select: false,
+    },
   },
   {
     toJSON: { virtuals: true },

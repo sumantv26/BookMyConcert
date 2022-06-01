@@ -31,7 +31,7 @@ const userValidation = {
     .pattern(/^[0-9]+$/)
     .required(),
   bankName: Joi.string().required(),
-  accountNum: Joi.number().min(9).max(18),
+  accountNum: Joi.string().min(9).max(18),
   ifscCode: Joi.string().length(11).required(),
   isApproved: Joi.boolean().default(false),
   banned: Joi.boolean().default(false),

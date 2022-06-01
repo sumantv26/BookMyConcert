@@ -9,10 +9,13 @@ const router = express.Router();
 
 router.get("/", concertController.getAllPosts);
 router.get("/recently-posted", concertController.getRecents);
+
 router.get("/:id", concertController.getPost);
 
+router.use(authController.protected);
+// name price date
+
 router.use(
-  authController.protected,
   authController.restrictTo("manager"),
   authController.isManagerApproved
 );

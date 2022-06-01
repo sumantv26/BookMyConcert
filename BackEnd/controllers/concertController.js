@@ -2,13 +2,16 @@ const Concert = require("../models/ConcertModels/Concert");
 // const Manager = require("../models/UserModels/Manager");
 const Customer = require("../models/UserModels/Customer");
 // const Reviews = require("../models/ConcertModels/Review");
+const APIFeatures = require("./APIFeatures");
 const errIdentifier = require("../utils/errIdentifier");
 const imageController = require("./imageController");
 const deleteFile = require("../utils/deleteFile");
 const Review = require("../models/ConcertModels/Review");
+// const Booking = require("../models/ConcertModels/Booking");
 // const { query } = require("express");
 
-const filePath = `${__dirname}/../public/img/concerts`;
+const FILE_PATH = `${__dirname}/../public/img/concerts`;
+const MIN_WITHDRAWAL_AMT = 100;
 
 exports.verifyConcert = errIdentifier.catchAsync(async (req, res, next) => {
   const concert = await Concert.findById(req.params.id);
@@ -69,7 +72,8 @@ exports.createPost = errIdentifier.catchAsync(async (req, res, next) => {
 });
 
 exports.getPost = errIdentifier.catchAsync(async (req, res, next) => {
-  const populateReviews = await Concert.findById(req.params.id).populate({
+  let concert = await Concert.findById(req.params.id);
+  const populateReviews = await concert.populate({
     path: "reviews",
     options: {
       sort: { rating: -1, updatedAt: -1 },
@@ -94,6 +98,15 @@ const filterFields = (obj) => {
 };
 
 exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Concert.find({}), req.query).sort();
+  // .limitFields()
+  // .paginate();
+  const allPosts = await features.query;
+  return res.status(200).json({
+    length: allPosts.length,
+    status: "success",
+    data: allPosts,
+  });
   // filterFields(req.query);
   // const queryObj = { ...req.query };
   // let queryStr = JSON.stringify(queryObj);
@@ -119,11 +132,6 @@ exports.getAllPosts = errIdentifier.catchAsync(async (req, res, next) => {
   //     },
   //   },
   // ]);
-  // return res.status(200).json({
-  //   length: allPosts.length,
-  //   status: "success",
-  //   data: allPosts,
-  // });
 });
 
 exports.getRecents = errIdentifier.catchAsync(async (req, res, next) => {
@@ -201,11 +209,11 @@ exports.updatePostImage = errIdentifier.catchAsync(async (req, res, next) => {
     $and: [{ _id: id }, { [key]: prevFilename }],
   });
   if (!concert) {
-    await deleteFile(filePath, newFilename);
+    await deleteFile(FILE_PATH, newFilename);
     return errIdentifier.generateError(next, "Unable to update the image", 400);
   }
   updateImage(id, key, prevFilename, newFilename);
-  await deleteFile(filePath, prevFilename);
+  await deleteFile(FILE_PATH, prevFilename);
   res.status(200).json({
     status: "success",
     message: `Image updated successfully`,
@@ -249,9 +257,9 @@ const deleteImages = async (post) => {
   for (const key of imgKeys) {
     if (Array.isArray(post[key])) {
       post[key].forEach(async (imgName) => {
-        await deleteFile(filePath, imgName);
+        await deleteFile(FILE_PATH, imgName);
       });
-    } else await deleteFile(filePath, post[key]);
+    } else await deleteFile(FILE_PATH, post[key]);
   }
 };
 
@@ -267,5 +275,32 @@ exports.deletePost = errIdentifier.catchAsync(async (req, res, next) => {
   return res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.withdrawAmt = errIdentifier.catchAsync(async (req, res, next) => {
+  const concert = await Concert.findById(req.params.concertId).select(
+    "isWithdrawal amtCollected"
+  );
+  if (!concert)
+    return errIdentifier.generateError(
+      next,
+      "This concert doesn't exits. Try to create one",
+      404
+    );
+  if (concert.amtCollected < MIN_WITHDRAWAL_AMT)
+    return errIdentifier.generateError(
+      next,
+      "Amount withdraw should be greater than or equal to 100.",
+      403
+    );
+  await Concert.findByIdAndUpdate(concert._id, {
+    isWithdrawal: true,
+  });
+
+  return res.status(200).json({
+    status: "success",
+    message:
+      "Your withdrawal request has been successfully registered. It might take 3 to 5 working days to transfer the amount.",
   });
 });

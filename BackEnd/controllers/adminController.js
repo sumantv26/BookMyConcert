@@ -143,3 +143,7 @@ exports.unBanManager = errIdentifier.catchAsync(async (req, res, next) => {
     data: unBanManager,
   });
 });
+
+exports.getWithdrawalRequests = errIdentifier.catchAsync(
+  async (req, res, next) => {}
+);

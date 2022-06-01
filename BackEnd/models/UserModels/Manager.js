@@ -17,12 +17,12 @@ const schema = new mongoose.Schema(
       required: true,
     },
     accountNum: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     },
     ifscCode: {
-      type: Number,
+      type: String,
       required: true,
     },
     isApproved: {

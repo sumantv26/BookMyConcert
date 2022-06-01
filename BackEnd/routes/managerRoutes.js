@@ -11,6 +11,8 @@ router.use(
   authController.isManagerApproved
 );
 
+router.post("/withdraw/:concertId", concertController.withdrawAmt);
+
 router.get("/my-concerts", concertController.getAllConcerts);
 
 router.post("/post", validate.concertIp, concertController.createPost);

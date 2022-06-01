@@ -25,6 +25,8 @@ router.get("/cities", userController.getCities);
 
 router.use(authController.protected);
 
+// router.get("/:userId", userController.getUser);
+
 router.get("/me", userController.getMe);
 
 router.get("/me/bookings", bookingController.getMyBookings);

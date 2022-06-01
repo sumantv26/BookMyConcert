@@ -1,6 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const getModel = require("../utils/getModel");
+const mongoose = require("mongoose");
 const errIdentifier = require("../utils/errIdentifier");
 const AllUsers = require("../models/UserModels/AllUsers");
 const Concert = require("../models/ConcertModels/Concert");
@@ -8,6 +9,7 @@ const Booking = require("../models/ConcertModels/Booking");
 
 exports.getCheckoutSession = errIdentifier.catchAsync(
   async (req, res, next) => {
+    console.log(req.params.concertId);
     const concert = await Concert.findById(req.params.concertId);
     const quantity = req.body?.quantity || 1;
     console.log(__dirname);
@@ -23,10 +25,8 @@ exports.getCheckoutSession = errIdentifier.catchAsync(
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      success_url: `${req.protocol}://${req.get("host")}/`,
-      cancel_url: `${req.protocol}://${req.get("host")}/concert/:${
-        concert._id
-      }`,
+      success_url: `${req.protocol}://${req.get("host")}/success`,
+      cancel_url: `${req.protocol}://${req.get("host")}/bookings`,
       customer_email: req.user.email,
       client_reference_id: concert._id,
       line_items: [
@@ -41,15 +41,22 @@ exports.getCheckoutSession = errIdentifier.catchAsync(
       ],
     });
 
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      session.payment_intent
+    );
+
     res.status(200).json({
       status: "success",
       session,
+      client_secret: paymentIntent.client_secret,
     });
   }
 );
 
 //TODO:
-exports.getAllBookings = errIdentifier.catchAsync(async (req, res, next) => {});
+exports.getAllBookings = errIdentifier.catchAsync(async (req, res, next) => {
+  const allBookings = await Booking.find({ concertId: req.params.concertId });
+});
 
 async function createBookingEntry(session) {
   const concertId = session.client_reference_id;
@@ -64,6 +71,9 @@ async function createBookingEntry(session) {
     customerId,
     price,
     noOfBookings: quantity,
+  });
+  await Concert.findByIdAndUpdate(concertId, {
+    $inc: { amtCollected: price, bookedSlots: quantity },
   });
 }
 
@@ -84,4 +94,32 @@ exports.webhookCheckout = errIdentifier.catchAsync(async (req, res, next) => {
   res.status(200).json({ recieved: true });
 });
 
-exports.getMyBookings = errIdentifier.catchAsync(async (req, res, next) => {});
+exports.getMyBookings = errIdentifier.catchAsync(async (req, res, next) => {
+  // const newBooking = await Booking.create({
+  //   concertId: mongoose.Types.ObjectId("62624b36dc2f7cdf0889e010"),
+  //   customerId: mongoose.Types.ObjectId("625e40de3a2fd0d7ead3d918"),
+  //   noOfBookings: 3,
+  //   price: 3000,
+  // });
+  // console.log(newBooking);
+  const myBookings = await Booking.find({ customerId: req.user.id })
+    .populate({
+      path: "concertId",
+      // select: {
+      //   name: 1,
+      //   coverImage: 1,
+      // },
+    })
+    .populate({
+      path: "customerId",
+      select: {
+        name: 1,
+        avatar: 1,
+      },
+    });
+
+  res.status(200).json({
+    status: "success",
+    myBookings,
+  });
+});

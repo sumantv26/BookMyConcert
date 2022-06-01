@@ -13,5 +13,6 @@ router.get("/reportedManagers", adminController.getReportedManagers);
 router.patch("/reportedManagers/:id", adminController.banManager);
 router.get("/bannedManagers", adminController.getBannedManagers);
 router.patch("/bannedManagers/:id", adminController.unBanManager);
-
+router.get("/withdrawal-requests", adminController.getWithdrawalRequests);
+router.post("/withdrawal-accepted");
 module.exports = router;

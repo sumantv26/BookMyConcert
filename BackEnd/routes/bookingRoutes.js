@@ -9,9 +9,10 @@ router.use(authController.protected);
 
 router.get(
   "/checkout-session/:concertId",
-  authController.restrictTo("customer"),
+  // authController.restrictTo("customer"),
   bookingController.getCheckoutSession
 );
 
 router.use(authController.restrictTo("manager", "admin"));
 router.get("/:concertId", bookingController.getAllBookings);
+module.exports = router;

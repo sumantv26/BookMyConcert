@@ -177,3 +177,13 @@ exports.deleteMe = errIdentifier.catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+// exports.getUser = errIdentifier.catchAsync(async (req, res, next) => {
+//   const { role } = await Users.findById(req.params.userId);
+//   const Model = getModel(role);
+//   const user = await Model.findById(req.params.userId).select("-password");
+//   res.status(200).json({
+//     status: "success",
+//     data: user,
+//   });
+// });

@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const schema = new mongoose.Schema(
   {
     concertId: {
-      type: mongoose.ObjectId,
-      ref: "Concert",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Concerts",
       required: true,
       immutable: true,
     },
     customerId: {
-      type: mongoose.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       require: true,
       immutable: true,
@@ -29,22 +29,24 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.pre(/^find/, function (next) {
-  this.populate({
-    path: "concertId",
-    select: {
-      name: 1,
-      coverImage: 1,
-    },
-  }).populate({
-    path: "customerId",
-    select: {
-      name: 1,
-      avatar: 1,
-    },
-  });
-});
+// schema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "concertId",
+//     select: {
+//       name: 1,
+//       coverImage: 1,
+//     },
+//   });
+//   .populate({
+//   path: "customerId",
+//   select: {
+//     name: 1,
+//     avatar: 1,
+//   },
+// });
+//   next();
+// });
 
-const Booking = mongoose.model("Bookings", schema);
+const Booking = mongoose.model("Booking", schema);
 
 module.exports = Booking;
