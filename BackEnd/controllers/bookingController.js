@@ -25,8 +25,8 @@ exports.getCheckoutSession = errIdentifier.catchAsync(
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      success_url: `${req.protocol}://${req.get("host")}/success`,
-      cancel_url: `${req.protocol}://${req.get("host")}/bookings`,
+      success_url: `https://rave-square-concert-booking.netlify.app/success`,
+      cancel_url: `https://rave-square-concert-booking.netlify.app/bookings`,
       customer_email: req.user.email,
       client_reference_id: concert._id,
       line_items: [
